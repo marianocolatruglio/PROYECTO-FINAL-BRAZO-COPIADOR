@@ -35,10 +35,10 @@ const float pasosPorRevSalida = 200.0 * 92.0;
 const float pasosPorDeg       = pasosPorRevSalida / 360.0;
 
 // Geometría articulada
-const float L1 = 200.0;     // actuadorLen1
-const float L2 = 200.0;     // actuadorLen2
-const float L3 = 150.0;     // couplerLen1 (eslabón final)
-const float L23 = L2 + L3;  // suma de eslabones terminales
+const float L1 = 50.0;     // actuadorLen1
+const float L2 = 150.0;     // actuadorLen2
+const float L3 = 100.0;     // couplerLen1 (eslabón final)
+
 
 // Coordenadas home
 float xHome = 0, yHome = 0;
@@ -117,41 +117,41 @@ void homingSimultaneo() {
 bool cinematicaDirecta(float th1_deg, float th2_deg, float &x, float &y) {
   float t1 = degToRad(th1_deg);
   float t2 = degToRad(th2_deg);
-  x = L1 * cos(t1) + L23 * cos(t2);
-  y = L1 * sin(t1) + L23 * sin(t2);
+  x = L2 * cos(t2) + (L3) * cos(PI-t1);
+  y = L2 * sin(t2) + (L3) * sin(PI-t1);
   return true;
 }
 
-// Cinemática inversa X, Y → th1, ht2
-bool cinematicaInversa(float x, float y, float &th1_deg, float &th2_deg) {
-  float D = (sq(x) + sq(y) - sq(L1) - sq(L23)) / (2 * L1 * L23);
-  if (D < -1.0 || D > 1.0) return false;
-  float t2 = acos(D);
-  float k1 = L1 + L23 * cos(t2);
-  float k2 = L23 * sin(t2);
-  float t1 = atan2(y, x) - atan2(k2, k1);
-  th1_deg = radToDeg(t1);
-  th2_deg = radToDeg(t2);
-  return true;
-}
+// // Cinemática inversa X, Y → th1, ht2
+// bool cinematicaInversa(float x, float y, float &th1_deg, float &th2_deg) {
+//   float D = (sq(x) + sq(y) - sq(L1) - sq(L23)) / (2 * L1 * L23);
+//   if (D < -1.0 || D > 1.0) return false;
+//   float t2 = acos(D);
+//   float k1 = L1 + L23 * cos(t2);
+//   float k2 = L23 * sin(t2);
+//   float t1 = atan2(y, x) - atan2(k2, k1);
+//   th1_deg = radToDeg(t1);
+//   th2_deg = radToDeg(t2);
+//   return true;
+// }
 
-void moveToXY(float Xrel, float Yrel) {
-  float xt = xHome + Xrel;
-  float yt = yHome + Yrel;
-  float t1, t2;
-  if(!cinematicaInversa(xt, yt, t1, t2)) {
-    Serial.println(F("Error: fuera de alcance"));
-    return;
-  }
-  long s1 = lround(t1 * pasosPorDeg);
-  long s2 = lround(t2 * pasosPorDeg);
-  motor1.moveTo(s1);
-  motor2.moveTo(s2);
-  while(motor1.distanceToGo()||motor2.distanceToGo()){
-    motor1.run(); 
-    motor2.run();
-  }
-}
+// void moveToXY(float Xrel, float Yrel) {
+//   float xt = xHome + Xrel;
+//   float yt = yHome + Yrel;
+//   float t1, t2;
+//   if(!cinematicaInversa(xt, yt, t1, t2)) {
+//     Serial.println(F("Error: fuera de alcance"));
+//     return;
+//   }
+//   long s1 = lround(t1 * pasosPorDeg);
+//   long s2 = lround(t2 * pasosPorDeg);
+//   motor1.moveTo(s1);
+//   motor2.moveTo(s2);
+//   while(motor1.distanceToGo()||motor2.distanceToGo()){
+//     motor1.run(); 
+//     motor2.run();
+//   }
+// }
 
 void setup() {
   Serial.begin(115200);
@@ -208,29 +208,31 @@ void loop() {
     float a2 = leerPosicionAcumulada(CH_ENCODER2);
     float xr, yr;
     if(cinematicaDirecta(a1,a2,xr,yr)) {
-      Serial.print(F("X_rel=")); Serial.print(xr - xHome,1);
-      Serial.print(F(" mm, Y_rel=")); Serial.print(yr - yHome,1);
+      Serial.print(F("X_rel=")); 
+      Serial.print(xr - xHome,1);
+      Serial.print(F(" mm, Y_rel=")); 
+      Serial.print(yr - yHome,1);
       Serial.println(F(" mm"));
     } else {
       Serial.println(F("Error cin.dir"));
     }
   }
-if (c == 'm') {
-  while (!Serial.available());  // Espera que haya datos
+// if (c == 'm') {
+//   while (!Serial.available());  // Espera que haya datos
 
-  String linea = Serial.readStringUntil('\n');  // Lee toda la línea enviada
-  float Xr = 0, Yr = 0;
-  int sep = linea.indexOf(' ');
-  if (sep != -1) {
-    Xr = linea.substring(0, sep).toFloat();
-    Yr = linea.substring(sep + 1).toFloat();
-    moveToXY(Xr, Yr);
-    Serial.print(F("Moviendo a X=")); Serial.print(Xr,1);
-    Serial.print(F(" mm, Y=")); Serial.print(Yr,1);
-    Serial.println(F(" → Movimiento completado"));
-  } else {
-    Serial.println(F("Error: formato inválido. Usar 'm 100 50'"));
-  }
+//   String linea = Serial.readStringUntil('\n');  // Lee toda la línea enviada
+//   float Xr = 0, Yr = 0;
+//   int sep = linea.indexOf(' ');
+//   if (sep != -1) {
+//     Xr = linea.substring(0, sep).toFloat();
+//     Yr = linea.substring(sep + 1).toFloat();
+//     moveToXY(Xr, Yr);
+//     Serial.print(F("Moviendo a X=")); Serial.print(Xr,1);
+//     Serial.print(F(" mm, Y=")); Serial.print(Yr,1);
+//     Serial.println(F(" → Movimiento completado"));
+//   } else {
+//     Serial.println(F("Error: formato inválido. Usar 'm 100 50'"));
+//   }
 
-}
+// }
 }
