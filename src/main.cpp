@@ -41,7 +41,7 @@ const float L2 = 150.0;
 const float L3 = 100.0;
 
 // Coordenadas home
-float xHome = 0, yHome = 0;
+float xHome = -41.0, yHome = -51.30;
 
 // Utilidades
 float degToRad(float d){ return d * PI / 180.0; }
@@ -84,7 +84,7 @@ float leerPosicionAcumulada(uint8_t canal) {
   *acc += delta;
   if (canal == CH_ENCODER1) prevRaw1 = raw; else prevRaw2 = raw;
   float gradosEncoder = (*acc) * (360.0f / 4096.0f);
-  return gradosEncoder / (92.0f / 16.0f);
+  return gradosEncoder / (86.0f / 16.0f);
 }
 
 // Rutina de homing simultáneo
@@ -192,10 +192,14 @@ void loop() {
         float xr, yr;
         if (cinematicaDirecta(posAcum1, posAcum2, xr, yr)) {
           Serial.print(F("X_rel="));
-          Serial.print(xr - xHome,1);
+          Serial.print(xr - 41,1);
           Serial.print(F(" mm, Y_rel="));
-          Serial.print(yr - yHome,1);
+          Serial.print(yr - 51.3,1);
           Serial.println(F(" mm"));
+          Serial.print(F("Distancia al origen="));  
+          Serial.print(sqrt(pow(xr - xHome, 2) + pow(yr - yHome, 2)), 1);
+          Serial.println(F(" mm")); 
+
         } else {
           Serial.println(F("Error cin.dir"));
         }
