@@ -169,8 +169,8 @@ bool cinematicaInversa(float x, float y, float &theta1_deg, float &theta2_deg)
 {
   float c = sqrt(x * x + y * y);
 
-  if (c > L2 + L3 || c < fabs(L2 - L3))
-    return false;
+  // if (c > L2 + L3 || c < fabs(L2 - L3))
+  //   return false;
 
   float phi = atan2(y, x);
 
