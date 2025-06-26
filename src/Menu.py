@@ -6,7 +6,7 @@ import sys
 # CONFIGURA ESTO según tu sistema
 PUERTO = 'COM6'    # o 'COM3' en Windows
 BAUDRATE = 115200
-TIEMPO_RESET = 2.5           # segundos
+TIEMPO_RESET = 0.1           # segundos
 
 def abrir_puerto():
     try:
@@ -45,6 +45,7 @@ s  : Mover N pasos en motor 2
 1  : Mover motor 1 en pasos fijos
 2  : Mover motor 2 en pasos fijos
 b  : Iniciar streaming de posiciones
+f  : Detener streaming de posiciones
 q  : Salir
 """)
 
@@ -99,11 +100,14 @@ def main():
                     respuesta = enviar(ser, f"i {x} {y}")
                     for line in respuesta:
                         print(line)
-                # case 'b':
-                #     respuesta = enviar(ser, cmd)
-                #     for line in respuesta:
-                #         print(line)
-
+                case 'b':
+                    respuesta = enviar(ser, cmd)
+                    for line in respuesta:
+                        print(line)
+                case 'f':
+                    respuesta = enviar(ser, cmd)
+                    for line in respuesta:
+                        print(line)
                 case _:
                     print("Opción no reconocida. Intenta de nuevo.")
 

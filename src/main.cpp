@@ -264,11 +264,11 @@ unsigned long tUltimaLectura = 0;
 float posAcum1 = 0, posAcum2 = 0;
 void msg()
 {
-  // Serial.println(F("----------------------------------------------------------------------------------------------------------------"));
-  // Serial.println(F("Comandos disponibles:"));
-  // Serial.println(F("Listo. 'h'=homing | 'p'=leer áng | 'k'=cin.dir | 'm'=cin.inv | 'e'=habilitar motores | 'd'=deshabilitar motores"));
-  // Serial.println(F(" 'i X Y'=mover a (X,Y) | 's N'=mover N pasos | 'q'=salir"));
-  // Serial.println(F(" '1'=mover motor 1 | '2'=mover motor 2"));
+  Serial.println(F("----------------------------------------------------------------------------------------------------------------"));
+  Serial.println(F("Comandos disponibles:"));
+  Serial.println(F("Listo. 'h'=homing | 'p'=leer áng | 'k'=cin.dir | 'm'=cin.inv | 'e'=habilitar motores | 'd'=deshabilitar motores"));
+  Serial.println(F(" 'i X Y'=mover a (X,Y) | 's N'=mover N pasos | 'q'=salir"));
+  Serial.println(F(" '1'=mover motor 1 | '2'=mover motor 2"));
   Serial.println(F("----------------------------------------------------------------------------------------------------------------"));
   return;
 }
