@@ -36,10 +36,9 @@ const float pasosPorRevSalida = 200.0 * 88.0;
 const float pasosPorDeg = pasosPorRevSalida / 360.0;
 
 // Geometría articulada
-const float L1 = 50.0;
 const float L2 = 150.0;
 const float L3 = 100.0;
-float t1a, t2a, t1b, t2b;
+float t1a, t2a;
 // Coordenadas home
 float xHome = 0, yHome = 0;
 
@@ -165,83 +164,98 @@ bool cinematicaDirecta(float th1_deg, float th2_deg, float &x, float &y)
   return true;
 }
 
-bool cinematicaInversa(float x, float y,
-                       float L2, float L3,
-                       float &theta1_sol1, float &theta2_sol1,
-                       float &theta1_sol2, float &theta2_sol2)
-{
-  // Distancia radial al punto objetivo
-  float r = sqrt(x * x + y * y);
-  if (r < 1e-6)
-    return false; // Evitar división por cero
-
-  // Parámetro K según deducción:
-  //    K = (L2^2 – L3^2 – r^2) / (2⋅L3)
-  float K = (L2 * L2 - L3 * L3 - r * r) / (2.0f * L3);
-
-  // cos(φ) = K / r
-  float cosPhi = K / r;
-  if (cosPhi < -1.0f || cosPhi > 1.0f)
-    return false; // Fuera de alcance
-
-  // Ángulo auxiliar φ y δ
+void cinematicaInversa(
+  float x, float y,
+  float l2, float l3,
+  float &q2, float &q3
+) {
+  // 1) Distancia al punto
+  Serial.print(F("Coordenadas del punto (x,y): "));
+  Serial.print(x, 1);
+  Serial.print(F(", "));
+  Serial.println(y, 1);
+  float r = sqrt(x*x + y*y);
+  Serial.print(F("Distancia al punto r: "));
+  Serial.println(r, 1);
+  
+  // 2) Ángulo interno en el codo (ley de cosenos)
+  float cosPhi = (l2*l2 + l3*l3 - r*r) / (2 * l2 * l3);
+  Serial.print(F("Ángulo interno en el codo cosPhi: "));
+  Serial.println(cosPhi, 4);
+  if (cosPhi < -1.0 || cosPhi > 1.0) {
+    Serial.println(F("Error: Punto fuera de alcance"));
+    q2 = q3 = 0; // Asignar valores inválidos
+    return;
+  }
+  // Asegurar rango válido para acos()
+  cosPhi = constrain(cosPhi, -1.0, 1.0);
   float phi = acos(cosPhi);
-  float delta = atan2(y, x);
 
-  // Solución “codo arriba”
-  theta1_sol1 = delta + phi;
-  // Solución “codo abajo”
-  theta1_sol2 = delta - phi;
+  // 3) Ángulo de codo (ángulo exterior)
+  q3 = PI - phi;
+  Serial.print(F("Ángulo de codo (q3): ")); Serial.println(radToDeg(q3), 2);
 
-  // Ahora t2 = atan2(y + L3⋅sin(t1),  x + L3⋅cos(t1))
-  theta2_sol1 = atan2(y + L3 * sin(theta1_sol1),
-                      x + L3 * cos(theta1_sol1));
-  theta2_sol2 = atan2(y + L3 * sin(theta1_sol2),
-                      x + L3 * cos(theta1_sol2));
+  // 4) Ángulo polar al punto
+  float beta = atan2(y, x);
+  Serial.print(F("Ángulo polar al punto beta: "));
+  Serial.println(radToDeg(beta), 2);
+  // 5) Desfase producido por el segundo eslabón
+  float alpha = atan2(l3 * sin(q3),
+                      l2 + l3 * cos(q3));
+ 
+  // 6) Ángulo de hombro
+  q2 = beta - alpha;
+  Serial.print(F("Ángulo de hombro (q2): "));
+  Serial.println(radToDeg(q2), 2);
+}
+void moverA(float x, float y) {
+  float q2, q3;
+  // 1) calcular ángulos
+  cinematicaInversa(x, y, L2, L3, q2, q3);
 
-  return true;
+  // 2) convertir radianes a pasos
+  long steps1 = q2 * (3200.0 * 88.0 / 16.0) / 360.0;
+  long steps2 = q3 * (3200.0 * 88.0 / 16.0) / 360.0;
+
+  // 3) planificar objetivo
+  motor1.moveTo(steps1);
+  motor2.moveTo(steps2);
+
+  // 4) ejecutar movimiento (bloqueante)
+  motor1.runToPosition();
+  motor2.runToPosition();
 }
 
-/**
- * Mueve el brazo hasta la posición (x, y).
- * @param x  Coordenada X deseada [mm]
- * @param y  Coordenada Y deseada [mm]
- * @return   true si el movimiento se completó, false si fuera de alcance
- */
-bool moverA(float x, float y) {
-  // 1) Calcular cinemática inversa
-  float t1_sol1, t2_sol1, t1_sol2, t2_sol2;
-  if (!cinematicaInversa(x, y, L2, L3, t1_sol1, t2_sol1, t1_sol2, t2_sol2)) {
-    return false;  // fuera de alcance
+bool streaming = false;                  // bandera de transmisión
+const uint16_t STREAM_INTERVAL = 10;     // ms entre muestras
+
+void streamEncoderPositions(uint16_t intervalo) {
+  Serial.println(F("STREAM_START"));     // marcador de inicio
+  unsigned long tPrev = millis();
+  while (true) {
+    // 1) Leer si llegó la orden de fin ('f')
+    if (Serial.available()) {
+      char c = Serial.read();
+      if (c == 'f') {
+        Serial.println(F("STREAM_END")); // marcador de fin
+        break;
+      }
+    }
+    // 2) Cada intervalo ms, muestro posiciones
+    unsigned long tNow = millis();
+    if (tNow - tPrev >= intervalo) {
+      tPrev = tNow;
+      float p1 = leerPosicionAcumulada(CH_ENCODER1);
+      float p2 = leerPosicionAcumulada(CH_ENCODER2);
+      // Envia "p1 \t p2\n"
+      Serial.print(p1, 2);
+      Serial.print('\t');
+      Serial.println(p2, 2);
+      
+    }
   }
-
-  // 2) Elegir la solución deseada (aquí “solución 1” codo arriba)
-  float t1 = t1_sol1;
-  float t2 = t2_sol1;
-
-  // float t1 = t1_sol2;
-  // float t2 = t2_sol2;
-
-  // 3) Convertir radianes a grados
-  float t1_deg = radToDeg(t1);
-  float t2_deg = radToDeg(t2);
-
-  // 4) Calcular pasos absolutos para cada motor
-  long pasos1 = lround(t1_deg * pasosPorDeg);
-  long pasos2 = lround(t2_deg * pasosPorDeg);
-
-  // 5) Ordenar movimiento absoluto
-  motor1.moveTo(pasos1);
-  motor2.moveTo(pasos2);
-
-  // 6) Ejecutar hasta llegar
-  while (motor1.distanceToGo() != 0 || motor2.distanceToGo() != 0) {
-    motor1.run();
-    motor2.run();
-  }
-
-  return true;
 }
+
 
 
 // ———————— Gestión de muestreo periódico ————————
@@ -250,17 +264,18 @@ unsigned long tUltimaLectura = 0;
 float posAcum1 = 0, posAcum2 = 0;
 void msg()
 {
-  Serial.println(F("----------------------------------------------------------------------------------------------------------------"));
-  Serial.println(F("Comandos disponibles:"));
-  Serial.println(F("Listo. 'h'=homing | 'p'=leer áng | 'k'=cin.dir | 'm'=cin.inv | 'e'=habilitar motores | 'd'=deshabilitar motores"));
-  Serial.println(F(" 'i X Y'=mover a (X,Y) | 's N'=mover N pasos | 'q'=salir"));
-  Serial.println(F(" '1'=mover motor 1 | '2'=mover motor 2"));
+  // Serial.println(F("----------------------------------------------------------------------------------------------------------------"));
+  // Serial.println(F("Comandos disponibles:"));
+  // Serial.println(F("Listo. 'h'=homing | 'p'=leer áng | 'k'=cin.dir | 'm'=cin.inv | 'e'=habilitar motores | 'd'=deshabilitar motores"));
+  // Serial.println(F(" 'i X Y'=mover a (X,Y) | 's N'=mover N pasos | 'q'=salir"));
+  // Serial.println(F(" '1'=mover motor 1 | '2'=mover motor 2"));
   Serial.println(F("----------------------------------------------------------------------------------------------------------------"));
   return;
 }
 void setup()
 {
   Serial.begin(115200);
+  delay(50);
   Wire.begin();
   encoder.begin();
   encoder.setDirection(AS5600_CLOCK_WISE);
@@ -340,31 +355,25 @@ void loop() {
       }
       case 'm': {
         String cmd = Serial.readStringUntil('\n');
-        float x = cmd.substring(2).toFloat();
+        float x = cmd.substring(0).toFloat();
         int sep = cmd.indexOf(' ', 3);
         float y = cmd.substring(sep + 1).toFloat();
-        // if (cinematicaInversa(x, y, L2, L3, t1a, t2a, t1b, t2b)) {
-          Serial.print("Solución 1: t1="); Serial.print(t1a);
-          Serial.print("  t2="); Serial.println(t2a);
-          Serial.print("Solución 2: t1="); Serial.print(t1b);
-          Serial.print("  t2="); Serial.println(t2b);
-        // } else {
-          // Serial.println("Objetivo fuera de alcance");
-        
-        msg();
+
+        (cinematicaInversa(x, y, L2, L3, t1a, t2a));
+        Serial.print("Solución 1: theta1="); Serial.print(radToDeg(t1a)+21.2, 2);
+        Serial.print("Solución 2: theta2="); Serial.println(radToDeg(t2a), 2);
         break;
       }
       case 'i': {
         // Comando “i X Y” para mover a (x,y)
         String cmd = Serial.readStringUntil('\n');
-        float x = cmd.substring(2).toFloat();
+        float x = cmd.substring(0).toFloat() ;
         int sep = cmd.indexOf(' ', 3);
-        float y = cmd.substring(sep + 1).toFloat();
-        if (moverA(x, y)) {
-          Serial.println("Movimiento completado");
-        } else {
-          Serial.println("Objetivo fuera de alcance");
-        }
+        float y = cmd.substring(sep + 1).toFloat() ;
+        Serial.print(F("Mover a (X,Y)=(")); Serial.print(x, 1); Serial.print(F(", ")); Serial.print(y, 1); Serial.println(F(")"));   
+        moverA(x, y);
+        Serial.print(F("Moviendo a (X,Y)=(")); Serial.print(x, 1); Serial.print(F(", ")); Serial.print(y, 1); Serial.println(F(")"));
+
         msg();
         break;
       }
@@ -417,6 +426,14 @@ void loop() {
         msg();
         break;
       }
+
+      case 'b': {  // 'b' = begin streaming
+        Serial.println(F("Iniciando streaming de posiciones..."));
+        streamEncoderPositions(STREAM_INTERVAL);
+        msg();
+        break;
+      }
+
     } // fin switch
   }
 } // fin loop
