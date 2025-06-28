@@ -43,7 +43,7 @@ def streaming_worker(ser):
         f.write('posacum1\tposacum2\n')
         while not stop_event.is_set():
             # Solicita posiciones al Arduino
-            respuestas = enviar(ser, 'o')
+            respuestas = enviar(ser, 'b')
             for texto in respuestas:
                 try:
                     partes = texto.split()
