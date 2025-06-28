@@ -36,8 +36,8 @@ const float pasosPorRevSalida = 200.0 * 88.0;
 const float pasosPorDeg = pasosPorRevSalida / 360.0;
 
 // Geometría articulada
-const float L2 = 150.0;
-const float L3 = 100.0;
+const float L1 = 150.0;
+const float L2 = 100.0;
 float t1a, t2a;
 // Coordenadas home
 float xHome = 0, yHome = 0;
@@ -158,60 +158,91 @@ void homingSimultaneo()
 bool cinematicaDirecta(float th1_deg, float th2_deg, float &x, float &y)
 {
   float t1 = degToRad(th1_deg);
-  float t2 = degToRad(th2_deg + 21.2);
-  x = -(L2 * cos(t2) + L3 * cos(t1 - PI));
-  y = L2 * sin(t2) + L3 * sin(t1 - PI);
+  float t2 = degToRad(th2_deg+21.2);
+  x = (L1 * cos(t2) + L2 * sin(t1 - (PI / 2))) - 39.8;
+  y = (L1 * sin(t2) - L2 * cos(t1 - (PI / 2))) - 54.2;
   return true;
 }
 
-void cinematicaInversa(
-  float x, float y,
-  float l2, float l3,
-  float &q2, float &q3
-) {
-  // 1) Distancia al punto
-  Serial.print(F("Coordenadas del punto (x,y): "));
-  Serial.print(x, 1);
-  Serial.print(F(", "));
-  Serial.println(y, 1);
-  float r = sqrt(x*x + y*y);
-  Serial.print(F("Distancia al punto r: "));
-  Serial.println(r, 1);
+// void cinematicaInversa(
+//   float x, float y,
+//   float l2, float l3,
+//   float &q2, float &q3
+// ) {
+//   // 1) Distancia al punto
+//   Serial.print(F("Coordenadas del punto (x,y): "));
+//   Serial.print(x, 1);
+//   Serial.print(F(", "));
+//   Serial.println(y, 1);
+//   float r = sqrt(x*x + y*y);
+//   Serial.print(F("Distancia al punto r: "));
+//   Serial.println(r, 1);
   
-  // 2) Ángulo interno en el codo (ley de cosenos)
-  float cosPhi = (l2*l2 + l3*l3 - r*r) / (2 * l2 * l3);
-  Serial.print(F("Ángulo interno en el codo cosPhi: "));
-  Serial.println(cosPhi, 4);
-  if (cosPhi < -1.0 || cosPhi > 1.0) {
-    Serial.println(F("Error: Punto fuera de alcance"));
-    q2 = q3 = 0; // Asignar valores inválidos
-    return;
-  }
+//   // 2) Ángulo interno en el codo (ley de cosenos)
+//   float cosPhi = ( r*r - l2*l2 - l3*l3) / (2 * l2 * l3);
+//   Serial.print(F("Ángulo interno en el codo cosPhi: "));
+//   Serial.println(cosPhi, 4);
+//   if (isnan(cosPhi)) {
+//     Serial.println(F("Error: cosPhi es NaN, punto fuera de alcance."));
+//     q2 = q3 = 0; // Asignar valores por defecto
+//     return;
+
+//   }
   // Asegurar rango válido para acos()
-  cosPhi = constrain(cosPhi, -1.0, 1.0);
-  float phi = acos(cosPhi);
+//   cosPhi = constrain(cosPhi, -1.0, 1.0);
+//   float phi = acos(cosPhi);
 
-  // 3) Ángulo de codo (ángulo exterior)
-  q3 = PI - phi;
-  Serial.print(F("Ángulo de codo (q3): ")); Serial.println(radToDeg(q3), 2);
+//   // 3) Ángulo de codo (ángulo exterior)
+//   q3 = atan2(-sqrt(1 - cosPhi*cosPhi),(cosPhi*cosPhi));
+//   Serial.print(F("Ángulo de codo (q3): ")); Serial.println(radToDeg(q3), 2);
 
-  // 4) Ángulo polar al punto
-  float beta = atan2(y, x);
-  Serial.print(F("Ángulo polar al punto beta: "));
-  Serial.println(radToDeg(beta), 2);
-  // 5) Desfase producido por el segundo eslabón
-  float alpha = atan2(l3 * sin(q3),
-                      l2 + l3 * cos(q3));
+//   // 4) Ángulo polar al punto
+//   float beta = atan2(y, x);
+//   Serial.print(F("Ángulo polar al punto beta: "));
+//   Serial.println(radToDeg(beta), 2);
+//   // 5) Desfase producido por el segundo eslabón
+//   float alpha = atan2(l3 * sin(q3),
+//                       l2 + l3 * cos(q3));
  
-  // 6) Ángulo de hombro
-  q2 = beta - alpha;
-  Serial.print(F("Ángulo de hombro (q2): "));
-  Serial.println(radToDeg(q2), 2);
+//   // 6) Ángulo de hombro
+//   q2 = beta + alpha ;
+//   Serial.print(F("Ángulo de hombro (q2): "));
+//   Serial.println(radToDeg(q2), 2);
+// }
+#include <math.h>
+
+
+
+// Función de cinemática inversa
+void cinematicaInversa(float x, float y, float& alpha, float& beta) {
+  float r2 = x*x + y*y;
+  float r = sqrt(r2);
+
+  // Verifica si el punto es alcanzable
+  float alcanceMaximo = L1 + L2;
+  float alcanceMinimo = fabs(L1 - L2);
+  // if (r > alcanceMaximo || r < alcanceMinimo) {
+  //   return false; // No alcanzable
+  // }
+
+  // Codo hacia arriba (convención)
+  float cosBeta = (L1*L1 + L2*L2 - r2) / (-2 * L1 * L2);
+  beta = PI - acos(constrain(cosBeta, -1.0, 1.0)); // importante: limitar dominio
+
+  float cosGamma = (L1*L1 + r2 - L2*L2) / (2 * L1 * r);
+  float gamma = acos(constrain(cosGamma, -1.0, 1.0));
+  float phi = atan2(y, x);
+
+  alpha = phi + gamma;
+
+  // return true; // Éxito
 }
+
+
 void moverA(float x, float y) {
   float q2, q3;
   // 1) calcular ángulos
-  cinematicaInversa(x, y, L2, L3, q2, q3);
+  cinematicaInversa(x, y, q2, q3);
 
   // 2) convertir radianes a pasos
   long steps1 = q2 * (3200.0 * 88.0 / 16.0) / 360.0;
@@ -220,10 +251,13 @@ void moverA(float x, float y) {
   // 3) planificar objetivo
   motor1.moveTo(steps1);
   motor2.moveTo(steps2);
+  
+  // 4) ejecutar movimiento 
+  while (motor1.distanceToGo() != 0 || motor2.distanceToGo() != 0 ) {
+    motor1.run();
+    motor2.run();
+  }
 
-  // 4) ejecutar movimiento (bloqueante)
-  motor1.runToPosition();
-  motor2.runToPosition();
 }
 
 bool streaming = false;                  // bandera de transmisión
@@ -341,11 +375,11 @@ void loop() {
       case 'k': {
         float xr, yr;
         if (cinematicaDirecta(posAcum1, posAcum2, xr, yr)) {
-          Serial.print(F("X_rel=")); Serial.print(xr+39.8, 1);
-          Serial.print(F(" mm, Y_rel=")); Serial.print(yr-54.2, 1);
+          Serial.print(F("X_rel=")); Serial.print(xr+0,1);
+          Serial.print(F(" mm, Y_rel=")); Serial.print(yr, 1);
           Serial.println(F(" mm"));
           Serial.print(F("Distancia al origen="));
-          Serial.print(sqrt(pow(xr + 39.8, 2) + pow(yr - 54.2, 2)), 1);
+          Serial.print(sqrt(pow(xr, 2) + pow(yr, 2)), 1);
           Serial.println(F(" mm"));
         } else {
           Serial.println(F("Error cin.dir"));
@@ -359,8 +393,8 @@ void loop() {
         int sep = cmd.indexOf(' ', 3);
         float y = cmd.substring(sep + 1).toFloat();
 
-        (cinematicaInversa(x, y, L2, L3, t1a, t2a));
-        Serial.print("Solución 1: theta1="); Serial.print(radToDeg(t1a)+21.2, 2);
+        (cinematicaInversa(x, y, t1a, t2a));
+        Serial.print("Solución 1: theta1="); Serial.print(radToDeg(t1a)+0, 2);
         Serial.print("Solución 2: theta2="); Serial.println(radToDeg(t2a), 2);
         break;
       }
@@ -371,10 +405,11 @@ void loop() {
         int sep = cmd.indexOf(' ', 3);
         float y = cmd.substring(sep + 1).toFloat() ;
         Serial.print(F("Mover a (X,Y)=(")); Serial.print(x, 1); Serial.print(F(", ")); Serial.print(y, 1); Serial.println(F(")"));   
-        moverA(x, y);
+        moverA(x,y);
         Serial.print(F("Moviendo a (X,Y)=(")); Serial.print(x, 1); Serial.print(F(", ")); Serial.print(y, 1); Serial.println(F(")"));
 
         msg();
+
         break;
       }
       case 's': { 
