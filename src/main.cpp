@@ -66,6 +66,58 @@ void calibrarZeroEncoders()
   acc2 = 0;
 }
 
+
+
+// Lee la posición acumulada de un encoder y la devuelve en pasos
+float leerPosicionAcumulada(uint8_t canal)
+{
+  uint16_t raw, prev;
+  int32_t *acc;
+  if (canal == CH_ENCODER1)
+  {
+    seleccionarCanal(CH_ENCODER1);
+    delay(5);
+    raw = encoder.readAngle();
+    prev = prevRaw1;
+    acc = &acc1;
+  }
+  else
+  {
+    seleccionarCanal(CH_ENCODER2);
+    delay(5);
+    raw = encoder.readAngle();
+    prev = prevRaw2;
+    acc = &acc2;
+  }
+  int16_t delta = int(raw) - int(prev);
+  if (delta > 2048)
+    delta -= 4096;
+  if (delta < -2048)
+    delta += 4096;
+  *acc += delta;
+  if (canal == CH_ENCODER1)
+    prevRaw1 = raw;
+  else
+    prevRaw2 = raw;
+  float gradosEncoder = (*acc) * (360.0f / 4096.0f);
+  return gradosEncoder / (88.0f / 16.0f);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Lee la posición acumulada de un encoder
 float leerPosicionAcumulada(uint8_t canal)
 {
