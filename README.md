@@ -1,4 +1,4 @@
-# brazocopiador
+# Brazo Copiador
 Brazo Robotico, copia y reproduce movimientos
 
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
