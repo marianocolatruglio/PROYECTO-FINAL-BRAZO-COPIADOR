@@ -17,79 +17,46 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 * Proveer a la industria de un sistema de posicionamiento robotico para operaciones de corte de metales in-situ de bajo costo , modular y de facil operacion, utilizando una estructura abierta.
 * Sustituir equipos importados de alto costo.
 
-## Componentes del Sistema 
+# Componentes del Sistema 
 
 ### 🔹 Motor Paso a Paso NEMA 23
 
 * **Descripción**: Motor paso a paso de alto torque utilizado para el control preciso de los ejes en máquinas CNC.
-* **Pines**: `A+`, `A-`, `B+`, `B-`
-
 ---
 
 ### 🔹 Placa de Expansión CNC Shield V3 para Grabado
 
 * **Descripción**: Placa de expansión que se conecta al Arduino para controlar motores paso a paso y otros periféricos.
-* **Pines**:
-  `EN`, `GND`, `X.Step`, `DIR`, `Y.Step`, `Z.Step`, `A.Step`, `5V`, `COM`, `V+`
-  `End Stop X-`, `End Stop Z+`, `End Stop Z-`, `End Stop Y+`, `End Stop Y-`
-  `SpnEN`, `SpnDir`, `CoolEn`, `Abort`, `Hold`, `Resume`, `E-Stop`
-  `Y.Motor A+`, `A-`, `B+`, `B-`
-  `X.Motor A+`, `A-`, `B+`, `B-`
-  `Z.Motor A+`, `A-`, `B+`, `B-`
-  `A.Motor A+`, `A-`, `B+`, `B-`
-  `RST`, `SDA`, `SCL`, `RX`, `TX`, `3V3`
-  `Enable`, `MS1`, `MS2`, `MS3`, `RESET`, `Sleep`, `Step`, `Direction`, `VDD`, `1B`, `1A`, `2A`, `2B`, `VMOT`, `M0`, `M1`, `M2`
-  `D12`, `D13`, `D7`, `D6`, `D5`, `D4`, `D3`, `D2`
-
 ---
 
 ### 🔹 Fuente de Alimentación
 
 * **Descripción**: Proporciona energía eléctrica a la CNC Shield y los componentes conectados.
-* **Pines**: `+`, `-`
-
 ---
 
 ### 🔹 Driver A4988
 
 * **Descripción**: Controlador para motores paso a paso, utilizado para manejar los motores NEMA 23.
-* **Pines**:
-  `VMOT`, `GND`, `2B`, `2A`, `1A`, `1B`, `VDD`, `EN`, `MS1`, `MS2`, `MS3`,
-  `RST`, `SLP`, `STEP`, `DIR`
-
 ---
 
 ### 🔹 Arduino UNO
 
 * **Descripción**: Microcontrolador principal que gestiona la lógica de control de la máquina CNC.
-* **Pines**:
-  `IOREF`, `Reset`, `3.3V`, `5V`, `GND`, `Vin`
-  `A0` a `A5`, `SCL`, `SDA`, `AREF`
-  `D0` a `D13`
-
 ---
 
 ### 🔹 Sensor AS5600
 
 * **Descripción**: Sensor magnético de posición rotativa, utilizado como realimentación tipo encoder.
-* **Pines**: `VCC`, `OUT`, `GND`, `GPO`, `SDA`, `SCL`, `DIR`
-
 ---
 
 ### 🔹 Multiplexor CD74HC4067
 
 * **Descripción**: Multiplexor/demultiplexor analógico de 16 canales.
-* **Pines**:
-  `SIG`, `S3`, `S2`, `S1`, `S0`, `EN`, `VCC`, `GND`
-  `C0` a `C15`
-
 ---
 
 ### 🔹 Finales de Carrera (Limit Switch)
 
 * **Descripción**: Detectan el fin de recorrido de los ejes del sistema CNC.
-* **Pines**: `C` (común), `NO` (normalmente abierto), `NC` (normalmente cerrado)
-
 ---
 
 
@@ -121,10 +88,46 @@ En nuestro proyecto la utilizamos con una configuracion personalizada para utili
 
 Es necesario darle un origen de referencia al sistema, para inicializar la posicion, entonces se debio programar una rutina de homing. Utilizamos 2 microswitchs para ello, los cuales se accionan al llevar los brazos al origen.
 
+## Arduino UNO
+El Arduino UNO está programado para controlar el dispositivo utilizando las siguientes bibliotecas: Arduino.h, AccelStepper.h, Wire.h y AS5600.h.
+El código gestiona el control de los motores, las rutinas de homing y la retroalimentación mediante encoders. Las funciones clave incluyen:
+
+Rutina de Homing: La función homingSimultaneo() realiza el homing simultáneo de los motores utilizando finales de carrera.
+
+Calibración de Encoders: La función calibrarZeroEncoders() calibra la posición cero de los encoders.
+
+Lectura de Posición: La función leerPosicionAcumulada() lee la posición acumulada desde los encoders.
+
+Cinemática Directa: La función cinematicaDirecta() calcula la posición de la herramienta CNC en base a los ángulos de los motores.
+
+Comandos por Serial: El código incluye una interfaz serial para comandos como homing, habilitar/deshabilitar motores y lectura de posiciones.
+
+Las funciones setup() y loop() inicializan el sistema y gestionan tareas periódicas y el procesamiento de comandos.
+El código está estructurado para permitir una fácil expansión e integración con componentes o funcionalidades adicionales.
 
 
 
 
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
 
 
 
