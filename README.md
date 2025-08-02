@@ -96,6 +96,58 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 # Circuitos
 <img width="3000" height="2700" alt="circuit_image" src="https://github.com/user-attachments/assets/87880af7-bc9d-4427-abf0-7493b8a86297" />
 
+# Principio de Funcionamiento 
+
+Se seleccionó como accionamiento 2 motores paso a paso, por su simplicidad y presición de posicionamiento, utilizando una configuracion de multistepping 1/16. Ademas se agregaron encoders magneticos AS5600 que tienen una 
+precision de 4096 steps/rev. Estos se utilizaran para obtener la posicion angular de los brazos. Con esta informacion crearemos un streaming de datos se transmitirá via serial mediante pares de coordenadas que se almacenaran en un archivo .TXT a traves de un script de Python. 
+
+## Morfologia del robot.
+  Se utilizo una configuracion de brazos planos paralelos con ambos accionamientos sobre el mismo eje.
+  Esto se decidió con el objetivo de reducior el peso en el extremo del robot, con el ojetivo de alcanzar extensiones largas con una inercia minima.
+  La reduccion de los motores es de 88/16, mediante correas GT2, las cuales se imprimieron en 3D con filamento flexible TPU.
+  De esta forma se agrupo toda la transmision en la base del dispositivo donde se concentra la mayor parte del peso.
+  
+
+## Encoders AS5600
+
+Estos encoders utilizan una comunicacion I2C, con el problema que tienen una direccion estatica 0x36. lo cual nos obligo a utilizar un multiplexor, segun recomendacion de del creador de la Libreria (https://github.com/RobTillaart/AS5600) utilizamos el siguiente : CD74HC4067. De esta forma podemos obtener de ambos encoders casi simultaneamente.
+
+## CNC Shield Protoneer v3.0
+
+La placa de expansión para máquina de grabado CNC Shield V3 de Protoneer es una placa de expansión versátil y potente diseñada para controlar motores paso a paso en máquinas CNC. Se utiliza comúnmente en routers CNC, cortadoras láser y máquinas de grabado DIY. La placa es compatible con Arduino UNO y utiliza firmware GRBL para controlar hasta cuatro motores paso a paso, lo que permite un funcionamiento preciso y eficiente de la máquina.
+En nuestro proyecto la utilizamos con una configuracion personalizada para utilizar los pines disponibles para conectar los encoders, el multiplexor y los fines de carrera.
+
+## Homing
+
+Es necesario darle un origen de referencia al sistema, para inicializar la posicion, entonces se debio programar una rutina de homing. Utilizamos 2 microswitchs para ello, los cuales se accionan al llevar los brazos al origen.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
