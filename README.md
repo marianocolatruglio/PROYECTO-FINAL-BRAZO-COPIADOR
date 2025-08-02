@@ -20,6 +20,99 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 
 # Alcance
 
+# Problematica
+
+# Componentes Utilizados
+
+Como parte del Hardware se utilizaron los siguientes componentes:
+NEMA23 Stepper Motor
+Description: A high-torque stepper motor used for precise control of CNC axes.
+Pins: A+, A-, B+, B-
+CNC Shield V3 Engraving Machine Expansion Board
+Description: An expansion board that interfaces with the Arduino to control stepper motors and other peripherals.
+Pins: EN, GND, x.Step, DIR, Y.Step, Z.Step, A.Step, 5V, COM, V+, End Stop X-, End Stop Z+, End Stop Z-, End Stop Y+, End Stop Y-, SpnEN, SpnDir, CoolEn, Abort, Hold, Resume, E-Stop, Y.Motor A+, Y.Motor A-, Y.Motor B+, Y.Motor B-, RST, SDA, SCL, RX, TX, 3V3, X.Motor A+, X.Motor A-, X.Motor B+, X.Motor B-, Z.Motor A+, Z.Motor A-, Z.Motor B+, Z.Motor B-, A.Motor A+, A.Motor A-, A.Motor B+, A.Motor B-, Enable, MS1, MS2, MS3, RESET, Sleep, Step, Direction, VDD, 1B, 1A, 2A, 2B, VMOT, M0, M1, M2, d12, A Drive Step and Direction, Z Drive Module Setp D4, Y Drive Module Setp D3, X Drive Module Setp D2, Set X Drive Module Dir D5, Set Y Drive Module Dir D6, Set Z Aquí tenés la traducción al español y el formato compatible con GitHub Markdown, ideal para un `README.md` o documentación técnica clara y ordenada:
+
+---
+
+## Componentes del Sistema CNC
+
+### 🔹 Motor Paso a Paso NEMA 23
+
+* **Descripción**: Motor paso a paso de alto torque utilizado para el control preciso de los ejes en máquinas CNC.
+* **Pines**: `A+`, `A-`, `B+`, `B-`
+
+---
+
+### 🔹 Placa de Expansión CNC Shield V3 para Grabado
+
+* **Descripción**: Placa de expansión que se conecta al Arduino para controlar motores paso a paso y otros periféricos.
+* **Pines**:
+  `EN`, `GND`, `X.Step`, `DIR`, `Y.Step`, `Z.Step`, `A.Step`, `5V`, `COM`, `V+`
+  `End Stop X-`, `End Stop Z+`, `End Stop Z-`, `End Stop Y+`, `End Stop Y-`
+  `SpnEN`, `SpnDir`, `CoolEn`, `Abort`, `Hold`, `Resume`, `E-Stop`
+  `Y.Motor A+`, `A-`, `B+`, `B-`
+  `X.Motor A+`, `A-`, `B+`, `B-`
+  `Z.Motor A+`, `A-`, `B+`, `B-`
+  `A.Motor A+`, `A-`, `B+`, `B-`
+  `RST`, `SDA`, `SCL`, `RX`, `TX`, `3V3`
+  `Enable`, `MS1`, `MS2`, `MS3`, `RESET`, `Sleep`, `Step`, `Direction`, `VDD`, `1B`, `1A`, `2A`, `2B`, `VMOT`, `M0`, `M1`, `M2`
+  `D12`, `D13`, `D7`, `D6`, `D5`, `D4`, `D3`, `D2`
+
+---
+
+### 🔹 Fuente de Alimentación
+
+* **Descripción**: Proporciona energía eléctrica a la CNC Shield y los componentes conectados.
+* **Pines**: `+`, `-`
+
+---
+
+### 🔹 Driver A4988
+
+* **Descripción**: Controlador para motores paso a paso, utilizado para manejar los motores NEMA 23.
+* **Pines**:
+  `VMOT`, `GND`, `2B`, `2A`, `1A`, `1B`, `VDD`, `EN`, `MS1`, `MS2`, `MS3`,
+  `RST`, `SLP`, `STEP`, `DIR`
+
+---
+
+### 🔹 Arduino UNO
+
+* **Descripción**: Microcontrolador principal que gestiona la lógica de control de la máquina CNC.
+* **Pines**:
+  `IOREF`, `Reset`, `3.3V`, `5V`, `GND`, `Vin`
+  `A0` a `A5`, `SCL`, `SDA`, `AREF`
+  `D0` a `D13`
+
+---
+
+### 🔹 Sensor AS5600
+
+* **Descripción**: Sensor magnético de posición rotativa, utilizado como realimentación tipo encoder.
+* **Pines**: `VCC`, `OUT`, `GND`, `GPO`, `SDA`, `SCL`, `DIR`
+
+---
+
+### 🔹 Multiplexor CD74HC4067
+
+* **Descripción**: Multiplexor/demultiplexor analógico de 16 canales.
+* **Pines**:
+  `SIG`, `S3`, `S2`, `S1`, `S0`, `EN`, `VCC`, `GND`
+  `C0` a `C15`
+
+---
+
+### 🔹 Finales de Carrera (Limit Switch)
+
+* **Descripción**: Detectan el fin de recorrido de los ejes del sistema CNC.
+* **Pines**: `C` (común), `NO` (normalmente abierto), `NC` (normalmente cerrado)
+
+---
+
+
+# Circuitos
+<img width="3000" height="2700" alt="circuit_image" src="https://github.com/user-attachments/assets/87880af7-bc9d-4427-abf0-7493b8a86297" />
+
 
 
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
