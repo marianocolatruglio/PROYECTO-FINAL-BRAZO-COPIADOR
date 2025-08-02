@@ -123,6 +123,12 @@ El código está estructurado para permitir una fácil expansión e integración
 <img width="3000" height="2700" alt="circuit_image" src="https://github.com/user-attachments/assets/87880af7-bc9d-4427-abf0-7493b8a86297" />
 
 
+# Fabricacion del prototipo
+
+Para la fabricacion del prototipo utilizamos el software de modelado parametrico Solidworks, donde se modelaron integramente las piezas mecanicas, para luego ser impresas mediante el proceso de FDM.
+Se utilizó una impresora Anycubic Kobra Neo 2 y las piezas se imprimieron con filamento PLA. Las correas GT2 se imprimieron con filamente FLEX - TPU.
+
+
 # Vistas del Modelo
 
 <p align="center">
