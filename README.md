@@ -17,6 +17,65 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 * Proveer a la industria de un sistema de posicionamiento robotico para operaciones de corte de metales in-situ de bajo costo , modular y de facil operacion, utilizando una estructura abierta.
 * Sustituir equipos importados de alto costo.
 
+# Principio de Funcionamiento 
+
+Se seleccionó como accionamiento 2 motores paso a paso, por su simplicidad y presición de posicionamiento, utilizando una configuracion de multistepping 1/16. Ademas se agregaron encoders magneticos AS5600 que tienen una 
+precision de 4096 steps/rev. Estos se utilizaran para obtener la posicion angular de los brazos. Con esta informacion crearemos un streaming de datos se transmitirá via serial mediante pares de coordenadas que se almacenaran en un archivo .TXT a traves de un script de Python. 
+
+## Arduino UNO 
+El Arduino UNO está programado para controlar el dispositivo utilizando las siguientes bibliotecas: Arduino.h, AccelStepper.h, Wire.h y AS5600.h.
+El código gestiona el control de los motores, las rutinas de homing y la retroalimentación mediante encoders. Las funciones clave incluyen:
+
+Rutina de Homing: La función homingSimultaneo() realiza el homing simultáneo de los motores utilizando finales de carrera.
+
+Calibración de Encoders: La función calibrarZeroEncoders() calibra la posición cero de los encoders.
+
+Lectura de Posición: La función leerPosicionAcumulada() lee la posición acumulada desde los encoders.
+
+Cinemática Directa: La función cinematicaDirecta() calcula la posición de la herramienta CNC en base a los ángulos de los motores.
+
+Comandos por Serial: El código incluye una interfaz serial para comandos como homing, habilitar/deshabilitar motores y lectura de posiciones.
+
+Las funciones setup() y loop() inicializan el sistema y gestionan tareas periódicas y el procesamiento de comandos.
+El código está estructurado para permitir una fácil expansión e integración con componentes o funcionalidades adicionales.
+
+## Morfologia del robot.
+  Se utilizo una configuracion de brazos planos paralelos con ambos accionamientos sobre el mismo eje.
+  Esto se decidió con el objetivo de reducior el peso en el extremo del robot, con el ojetivo de alcanzar extensiones largas con una inercia minima.
+  La reduccion de los motores es de 88/16, mediante correas GT2, las cuales se imprimieron en 3D con filamento flexible TPU.
+  De esta forma se agrupo toda la transmision en la base del dispositivo donde se concentra la mayor parte del peso.
+  
+
+## Encoders AS5600
+
+Estos encoders utilizan una comunicacion I2C, con el problema que tienen una direccion estatica 0x36. lo cual nos obligo a utilizar un multiplexor, segun recomendacion de del creador de la Libreria (https://github.com/RobTillaart/AS5600) utilizamos el siguiente : CD74HC4067. De esta forma podemos obtener de ambos encoders casi simultaneamente.
+
+## CNC Shield Protoneer v3.0
+
+La placa de expansión para máquina de grabado CNC Shield V3 de Protoneer es una placa de expansión versátil y potente diseñada para controlar motores paso a paso en máquinas CNC. Se utiliza comúnmente en routers CNC, cortadoras láser y máquinas de grabado DIY. La placa es compatible con Arduino UNO y utiliza firmware GRBL para controlar hasta cuatro motores paso a paso, lo que permite un funcionamiento preciso y eficiente de la máquina.
+En nuestro proyecto la utilizamos con una configuracion personalizada para utilizar los pines disponibles para conectar los encoders, el multiplexor y los fines de carrera.
+
+## Homing
+
+Es necesario darle un origen de referencia al sistema, para inicializar la posicion, entonces se debio programar una rutina de homing. Utilizamos 2 microswitchs para ello, los cuales se accionan al llevar los brazos al origen.
+
+## Arduino UNO
+El Arduino UNO está programado para controlar el dispositivo utilizando las siguientes bibliotecas: Arduino.h, AccelStepper.h, Wire.h y AS5600.h.
+El código gestiona el control de los motores, las rutinas de homing y la retroalimentación mediante encoders. Las funciones clave incluyen:
+
+Rutina de Homing: La función homingSimultaneo() realiza el homing simultáneo de los motores utilizando finales de carrera.
+
+Calibración de Encoders: La función calibrarZeroEncoders() calibra la posición cero de los encoders.
+
+Lectura de Posición: La función leerPosicionAcumulada() lee la posición acumulada desde los encoders.
+
+Cinemática Directa: La función cinematicaDirecta() calcula la posición de la herramienta CNC en base a los ángulos de los motores.
+
+Comandos por Serial: El código incluye una interfaz serial para comandos como homing, habilitar/deshabilitar motores y lectura de posiciones.
+
+Las funciones setup() y loop() inicializan el sistema y gestionan tareas periódicas y el procesamiento de comandos.
+El código está estructurado para permitir una fácil expansión e integración con componentes o funcionalidades adicionales.
+
 # Componentes del Sistema 
 
 ### 🔹 Motor Paso a Paso NEMA 23
@@ -63,47 +122,7 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 # Circuitos
 <img width="3000" height="2700" alt="circuit_image" src="https://github.com/user-attachments/assets/87880af7-bc9d-4427-abf0-7493b8a86297" />
 
-# Principio de Funcionamiento 
 
-Se seleccionó como accionamiento 2 motores paso a paso, por su simplicidad y presición de posicionamiento, utilizando una configuracion de multistepping 1/16. Ademas se agregaron encoders magneticos AS5600 que tienen una 
-precision de 4096 steps/rev. Estos se utilizaran para obtener la posicion angular de los brazos. Con esta informacion crearemos un streaming de datos se transmitirá via serial mediante pares de coordenadas que se almacenaran en un archivo .TXT a traves de un script de Python. 
-
-## Morfologia del robot.
-  Se utilizo una configuracion de brazos planos paralelos con ambos accionamientos sobre el mismo eje.
-  Esto se decidió con el objetivo de reducior el peso en el extremo del robot, con el ojetivo de alcanzar extensiones largas con una inercia minima.
-  La reduccion de los motores es de 88/16, mediante correas GT2, las cuales se imprimieron en 3D con filamento flexible TPU.
-  De esta forma se agrupo toda la transmision en la base del dispositivo donde se concentra la mayor parte del peso.
-  
-
-## Encoders AS5600
-
-Estos encoders utilizan una comunicacion I2C, con el problema que tienen una direccion estatica 0x36. lo cual nos obligo a utilizar un multiplexor, segun recomendacion de del creador de la Libreria (https://github.com/RobTillaart/AS5600) utilizamos el siguiente : CD74HC4067. De esta forma podemos obtener de ambos encoders casi simultaneamente.
-
-## CNC Shield Protoneer v3.0
-
-La placa de expansión para máquina de grabado CNC Shield V3 de Protoneer es una placa de expansión versátil y potente diseñada para controlar motores paso a paso en máquinas CNC. Se utiliza comúnmente en routers CNC, cortadoras láser y máquinas de grabado DIY. La placa es compatible con Arduino UNO y utiliza firmware GRBL para controlar hasta cuatro motores paso a paso, lo que permite un funcionamiento preciso y eficiente de la máquina.
-En nuestro proyecto la utilizamos con una configuracion personalizada para utilizar los pines disponibles para conectar los encoders, el multiplexor y los fines de carrera.
-
-## Homing
-
-Es necesario darle un origen de referencia al sistema, para inicializar la posicion, entonces se debio programar una rutina de homing. Utilizamos 2 microswitchs para ello, los cuales se accionan al llevar los brazos al origen.
-
-## Arduino UNO
-El Arduino UNO está programado para controlar el dispositivo utilizando las siguientes bibliotecas: Arduino.h, AccelStepper.h, Wire.h y AS5600.h.
-El código gestiona el control de los motores, las rutinas de homing y la retroalimentación mediante encoders. Las funciones clave incluyen:
-
-Rutina de Homing: La función homingSimultaneo() realiza el homing simultáneo de los motores utilizando finales de carrera.
-
-Calibración de Encoders: La función calibrarZeroEncoders() calibra la posición cero de los encoders.
-
-Lectura de Posición: La función leerPosicionAcumulada() lee la posición acumulada desde los encoders.
-
-Cinemática Directa: La función cinematicaDirecta() calcula la posición de la herramienta CNC en base a los ángulos de los motores.
-
-Comandos por Serial: El código incluye una interfaz serial para comandos como homing, habilitar/deshabilitar motores y lectura de posiciones.
-
-Las funciones setup() y loop() inicializan el sistema y gestionan tareas periódicas y el procesamiento de comandos.
-El código está estructurado para permitir una fácil expansión e integración con componentes o funcionalidades adicionales.
 
 
 
