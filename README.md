@@ -4,6 +4,12 @@
 
 Brazo Robotico, copia y reproduce movimientos
 
+El proyecto consistió en desarrollar un brazo articulado de dos grados de libertad, capaz de grabar trayectorias guiadas por el usuario y luego reproducirlas automáticamente. Este tipo de soluciones se observa en la industria metalúrgica internacional, especialmente en tareas de corte térmico.
+Se planteó una alternativa local escalable, partiendo de un prototipo a pequeña escala como prueba de concepto. Si bien este no incluye herramientas de corte reales, sí valida el sistema de guiado, almacenamiento y reproducción.
+
+![RENDER1](https://github.com/user-attachments/assets/f081308e-e7b5-4d39-92d0-e8df6d7e722d)
+
+
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
 
 | Mes           | Investigación (h) | Aplicación (h) | Programación (h) | Total mensual (h) | Actividades principales |
