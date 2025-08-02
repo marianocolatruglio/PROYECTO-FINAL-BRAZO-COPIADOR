@@ -123,56 +123,24 @@ El código está estructurado para permitir una fácil expansión e integración
 <img width="3000" height="2700" alt="circuit_image" src="https://github.com/user-attachments/assets/87880af7-bc9d-4427-abf0-7493b8a86297" />
 
 
+# Vistas del Modelo
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7a986e9b-1f47-4f09-8889-d5921a0ae0a2" width="400" alt="image 1"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3eb8262e-3cf1-4530-b942-628630ac113b" width="400" alt="image 2"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e660af4a-de8a-4e27-9187-dc3bb7d53a65" width="400" alt="image 3"/>
+</p>
 
 
 
 
-
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
-
-.
-.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
+# 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
 
 | Mes           | Investigación (h) | Aplicación (h) | Programación (h) | Total mensual (h) | Actividades principales |
 |----------------|--------------------|----------------|-------------------|--------------------|---------------------------|
