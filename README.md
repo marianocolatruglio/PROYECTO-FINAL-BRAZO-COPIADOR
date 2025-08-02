@@ -128,6 +128,12 @@ El código está estructurado para permitir una fácil expansión e integración
 Para la fabricacion del prototipo utilizamos el software de modelado parametrico Solidworks, donde se modelaron integramente las piezas mecanicas, para luego ser impresas mediante el proceso de FDM.
 Se utilizó una impresora Anycubic Kobra Neo 2 y las piezas se imprimieron con filamento PLA. Las correas GT2 se imprimieron con filamente FLEX - TPU.
 
+# Despiece 
+
+
+https://github.com/user-attachments/assets/c534c029-4edf-490a-99b5-7e7f0a055c2a
+
+
 
 # Vistas del Modelo
 
