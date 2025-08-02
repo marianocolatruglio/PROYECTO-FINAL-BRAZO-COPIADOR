@@ -21,6 +21,7 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 # Alcance
 
 
+
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
 
 | Mes           | Investigación (h) | Aplicación (h) | Programación (h) | Total mensual (h) | Actividades principales |
