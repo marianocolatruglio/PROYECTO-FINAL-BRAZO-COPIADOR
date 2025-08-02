@@ -1,5 +1,7 @@
-# Sistema de Digitalizacion y Reproduccion de Contornos
+<img width="1920" height="850" alt="image" src="https://github.com/user-attachments/assets/06df05e8-b3f3-4d3c-b7fd-119643758fde" />
 
+# Sistema de Digitalizacion y Reproduccion de Contornos
+Desarrollado por Colatruglio M. - Dziubek N.
 ## Descripcion
 
 Brazo Robotico, copia y reproduce movimientos
@@ -8,6 +10,12 @@ El proyecto consistió en desarrollar un brazo articulado de dos grados de liber
 Se planteó una alternativa local escalable, partiendo de un prototipo a pequeña escala como prueba de concepto. Si bien este no incluye herramientas de corte reales, sí valida el sistema de guiado, almacenamiento y reproducción.
 
 ![RENDER1](https://github.com/user-attachments/assets/f081308e-e7b5-4d39-92d0-e8df6d7e722d)
+
+# Objetivo
+* Proveer a la industria de un sistema de posicionamiento robotico para operaciones de corte de metales in-situ de bajo costo , modular y de facil operacion, utilizando una estructura abierta.
+* Sustituir equipos importados de alto costo.
+*  
+
 
 
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
