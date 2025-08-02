@@ -1,4 +1,7 @@
-# Brazo Copiador
+# Sistema de Digitalizacion y Reproduccion de Contornos
+
+## Descripcion
+
 Brazo Robotico, copia y reproduce movimientos
 
 🗓️ Cronograma Mensual del Proyecto Final (Marzo–Julio 2025)
