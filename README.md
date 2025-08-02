@@ -17,24 +17,7 @@ Se planteó una alternativa local escalable, partiendo de un prototipo a pequeñ
 * Proveer a la industria de un sistema de posicionamiento robotico para operaciones de corte de metales in-situ de bajo costo , modular y de facil operacion, utilizando una estructura abierta.
 * Sustituir equipos importados de alto costo.
 
-
-# Alcance
-
-# Problematica
-
-# Componentes Utilizados
-
-Como parte del Hardware se utilizaron los siguientes componentes:
-NEMA23 Stepper Motor
-Description: A high-torque stepper motor used for precise control of CNC axes.
-Pins: A+, A-, B+, B-
-CNC Shield V3 Engraving Machine Expansion Board
-Description: An expansion board that interfaces with the Arduino to control stepper motors and other peripherals.
-Pins: EN, GND, x.Step, DIR, Y.Step, Z.Step, A.Step, 5V, COM, V+, End Stop X-, End Stop Z+, End Stop Z-, End Stop Y+, End Stop Y-, SpnEN, SpnDir, CoolEn, Abort, Hold, Resume, E-Stop, Y.Motor A+, Y.Motor A-, Y.Motor B+, Y.Motor B-, RST, SDA, SCL, RX, TX, 3V3, X.Motor A+, X.Motor A-, X.Motor B+, X.Motor B-, Z.Motor A+, Z.Motor A-, Z.Motor B+, Z.Motor B-, A.Motor A+, A.Motor A-, A.Motor B+, A.Motor B-, Enable, MS1, MS2, MS3, RESET, Sleep, Step, Direction, VDD, 1B, 1A, 2A, 2B, VMOT, M0, M1, M2, d12, A Drive Step and Direction, Z Drive Module Setp D4, Y Drive Module Setp D3, X Drive Module Setp D2, Set X Drive Module Dir D5, Set Y Drive Module Dir D6, Set Z Aquí tenés la traducción al español y el formato compatible con GitHub Markdown, ideal para un `README.md` o documentación técnica clara y ordenada:
-
----
-
-## Componentes del Sistema CNC
+## Componentes del Sistema 
 
 ### 🔹 Motor Paso a Paso NEMA 23
 
