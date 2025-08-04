@@ -60,7 +60,7 @@ Este código controla un **brazo copiador** con dos motores paso a paso y encode
 
 6. **GUI - INTERFAZ GRAFICA**
    
-   ![Imagen de WhatsApp 2025-08-03 a las 22 27 19_51b82a99](https://github.com/user-attachments/assets/4d090cfe-190c-4049-bfff-628752775015)
+   ![ ](https://github.com/user-attachments/assets/4d090cfe-190c-4049-bfff-628752775015)
 
 8. **Detalles técnicos:**
 
