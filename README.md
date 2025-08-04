@@ -58,7 +58,11 @@ Este código controla un **brazo copiador** con dos motores paso a paso y encode
    * `p`: imprimir posición actual
    * `e` / `d`: habilitar o deshabilitar drivers
 
-6. **Detalles técnicos:**
+6. **GUI - INTERFAZ GRAFICA**
+   
+   ![Imagen de WhatsApp 2025-08-03 a las 22 27 19_51b82a99](https://github.com/user-attachments/assets/4d090cfe-190c-4049-bfff-628752775015)
+
+8. **Detalles técnicos:**
 
    * Corrección de errores por redondeo en pasos mediante acumulación de restos.
    * Tiempo por paso calculado dinámicamente para mantener la velocidad angular deseada.
@@ -136,6 +140,13 @@ Es necesario darle un origen de referencia al sistema, para inicializar la posic
 
 Para la fabricacion del prototipo utilizamos el software de modelado parametrico Solidworks, donde se modelaron integramente las piezas mecanicas, para luego ser impresas mediante el proceso de FDM.
 Se utilizó una impresora Anycubic Kobra Neo 2 y las piezas se imprimieron con filamento PLA. Las correas GT2 se imprimieron con filamente FLEX - TPU.
+
+# Prueba - VIDEO
+
+
+
+https://github.com/user-attachments/assets/5e62bf16-36d7-4c9c-b1ba-a70892847485
+
 
 # Despiece - VIDEO
 
