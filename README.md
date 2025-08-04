@@ -66,7 +66,7 @@ Este código controla un **brazo copiador** con dos motores paso a paso y encode
 
 ## Morfologia del robot.
   Se utilizo una configuracion de brazos planos paralelos con ambos accionamientos sobre el mismo eje.
-  Esto se decidió con el objetivo de reducior el peso en el extremo del robot, con el ojetivo de alcanzar extensiones largas con una inercia minima.
+  Esto se decidió con el objetivo de reducir el peso en el extremo del robot, con el ojetivo de alcanzar extensiones largas con una inercia minima.
   La reduccion de los motores es de 88/16, mediante correas GT2, las cuales se imprimieron en 3D con filamento flexible TPU.
   De esta forma se agrupo toda la transmision en la base del dispositivo donde se concentra la mayor parte del peso.
   
