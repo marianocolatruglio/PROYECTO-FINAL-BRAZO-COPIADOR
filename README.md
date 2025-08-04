@@ -23,21 +23,46 @@ Se seleccionó como accionamiento 2 motores paso a paso, por su simplicidad y pr
 precision de 4096 steps/rev. Estos se utilizaran para obtener la posicion angular de los brazos. Con esta informacion crearemos un streaming de datos se transmitirá via serial mediante pares de coordenadas que se almacenaran en un archivo .TXT a traves de un script de Python. 
 
 ## Arduino UNO 
-El Arduino UNO está programado para controlar el dispositivo utilizando las siguientes bibliotecas: Arduino.h, AccelStepper.h, Wire.h y AS5600.h.
-El código gestiona el control de los motores, las rutinas de homing y la retroalimentación mediante encoders. Las funciones clave incluyen:
 
-Rutina de Homing: La función homingSimultaneo() realiza el homing simultáneo de los motores utilizando finales de carrera.
+## Resumen del funcionamiento
 
-Calibración de Encoders: La función calibrarZeroEncoders() calibra la posición cero de los encoders.
+Este código controla un **brazo copiador** con dos motores paso a paso y encoders magnéticos **AS5600** (lectura multivuelta). Los puntos más relevantes:
 
-Lectura de Posición: La función leerPosicionAcumulada() lee la posición acumulada desde los encoders.
+1. **Lectura de encoders (AS5600):**
 
-Cinemática Directa: La función cinematicaDirecta() calcula la posición de la herramienta CNC en base a los ángulos de los motores.
+   * Se obtienen ángulos absolutos en crudo (RAW ANGLE) a través de I²C.
+   * Se implementa un contador manual de vueltas para cada encoder usando un multiplexor 4051.
 
-Comandos por Serial: El código incluye una interfaz serial para comandos como homing, habilitar/deshabilitar motores y lectura de posiciones.
+2. **Control de motores:**
 
-Las funciones setup() y loop() inicializan el sistema y gestionan tareas periódicas y el procesamiento de comandos.
-El código está estructurado para permitir una fácil expansión e integración con componentes o funcionalidades adicionales.
+   * Los motores paso a paso se manejan mediante drivers tipo A4988/TMC, con microstepping configurado a **1/8** (1600 pasos/rev, 0.225°/paso).
+   * Se implementa un **movimiento interpolado** con velocidad constante de **45°/s**, ajustable con `speedFactor`.
+   * Al finalizar un segmento, se aplica **corrección de posición** usando el feedback de los encoders (anti-drift).
+
+3. **Homing automático:**
+
+   * Rutina `homingSimultaneo()` para buscar finales de carrera, retroceder y re-inicializar el conteo de ángulos.
+
+4. **Grabación y reproducción de trayectorias:**
+
+   * **Grabación:** lee continuamente los ángulos de los encoders y los envía por puerto serie (`g`).
+   * **Reproducción:** recibe una secuencia de ángulos (`INICIO_TRAYECTORIA` ... `FIN_TRAYECTORIA`) por serie y ejecuta los movimientos de forma sincronizada (`r`).
+   * Comunicación con **handshake**: el Arduino responde con `RDY`, `OK` por cada segmento y `DONE` al finalizar.
+
+5. **Comandos por serie:**
+
+   * `h`: homing
+   * `g`: iniciar grabación
+   * `r`: reproducir trayectoria
+   * `x`: detener grabación
+   * `p`: imprimir posición actual
+   * `e` / `d`: habilitar o deshabilitar drivers
+
+6. **Detalles técnicos:**
+
+   * Corrección de errores por redondeo en pasos mediante acumulación de restos.
+   * Tiempo por paso calculado dinámicamente para mantener la velocidad angular deseada.
+   * Tolerancia de corrección final de \~0.1° (medio micropaso).
 
 ## Morfologia del robot.
   Se utilizo una configuracion de brazos planos paralelos con ambos accionamientos sobre el mismo eje.
@@ -59,22 +84,6 @@ En nuestro proyecto la utilizamos con una configuracion personalizada para utili
 
 Es necesario darle un origen de referencia al sistema, para inicializar la posicion, entonces se debio programar una rutina de homing. Utilizamos 2 microswitchs para ello, los cuales se accionan al llevar los brazos al origen.
 
-## Arduino UNO
-El Arduino UNO está programado para controlar el dispositivo utilizando las siguientes bibliotecas: Arduino.h, AccelStepper.h, Wire.h y AS5600.h.
-El código gestiona el control de los motores, las rutinas de homing y la retroalimentación mediante encoders. Las funciones clave incluyen:
-
-Rutina de Homing: La función homingSimultaneo() realiza el homing simultáneo de los motores utilizando finales de carrera.
-
-Calibración de Encoders: La función calibrarZeroEncoders() calibra la posición cero de los encoders.
-
-Lectura de Posición: La función leerPosicionAcumulada() lee la posición acumulada desde los encoders.
-
-Cinemática Directa: La función cinematicaDirecta() calcula la posición de la herramienta CNC en base a los ángulos de los motores.
-
-Comandos por Serial: El código incluye una interfaz serial para comandos como homing, habilitar/deshabilitar motores y lectura de posiciones.
-
-Las funciones setup() y loop() inicializan el sistema y gestionan tareas periódicas y el procesamiento de comandos.
-El código está estructurado para permitir una fácil expansión e integración con componentes o funcionalidades adicionales.
 
 # Componentes del Sistema 
 
