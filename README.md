@@ -77,7 +77,7 @@ Este código controla un **brazo copiador** con dos motores paso a paso y encode
 
 ## Encoders AS5600
 
-Estos encoders utilizan una comunicacion I2C, con el problema que tienen una direccion estatica 0x36. lo cual nos obligo a utilizar un multiplexor, segun recomendacion de del creador de la Libreria (https://github.com/RobTillaart/AS5600) utilizamos el siguiente : CD74HC4067. De esta forma podemos obtener de ambos encoders casi simultaneamente.
+Estos encoders utilizan una comunicacion I2C, con el problema que tienen una direccion estatica 0x36. lo cual nos obligo a utilizar un multiplexor, segun recomendacion del creador de la Libreria (https://github.com/RobTillaart/AS5600) utilizamos el siguiente : CD74HC4067. De esta forma podemos obtener datos de ambos encoders simultaneamente.
 
 ## CNC Shield Protoneer v3.0
 
