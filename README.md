@@ -143,8 +143,6 @@ Se utilizó una impresora Anycubic Kobra Neo 2 y las piezas se imprimieron con f
 
 # Prueba - VIDEO
 
-
-
 https://github.com/user-attachments/assets/5e62bf16-36d7-4c9c-b1ba-a70892847485
 
 
